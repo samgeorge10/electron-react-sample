@@ -41,7 +41,7 @@ function createBrowserWindow() {
   // This will also show (but not focus) the window if it isn't being displayed already.
   currentWindow.maximize();
   // load the local index file of the application
-  currentWindow.loadFile('./public/index.html');
+  currentWindow.loadFile('./dist/index.html');
   // Don't show the app window until it is ready and loaded.
   // While loading the page, the `ready-to-show` event will be emitted
   // when the renderer process has rendered the page for the first time if the window has not been shown yet.
