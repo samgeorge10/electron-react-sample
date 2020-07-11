@@ -1,0 +1,26 @@
+{
+  "name": "electron-react-sample",
+  "version": "1.0.0",
+  "description": "This is a sample application developed with electron",
+  "main": "./src/index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samgeorge10/electron-react-sample.git"
+  },
+  "author": "Sam George",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/samgeorge10/electron-react-sample/issues"
+  },
+  "homepage": "https://github.com/samgeorge10/electron-react-sample#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^9.0.5"
+  },
+  "keywords": [
+    "electron-application"
+  ]
+}
