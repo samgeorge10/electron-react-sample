@@ -1,25 +1,47 @@
 /**
- * Webpack config file
+ * Webpack production config file
  *
- * @file webpack.config.js
+ * @file prod.config.js
  * @author Sam George
- * @since 1.1.0 
+ * @since 1.2.0
  */
 
+/* eslint-disable import/no-extraneous-dependencies */
+const webpack = require('webpack');
+const { merge } = require('webpack-merge');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const baseConfig = require('./base.config');
 
-const DEVELOPMENT = 'development';
 const templatePath = './public/index.html';
+const PRODUCTION = 'production';
 
-const config = {
-  mode: DEVELOPMENT, // string - 'none' | 'development' | 'production'
-  target: 'electron-main', // Compile for Electron for main process.
-  // string - async-node | electron-main | electron-renderer | electron-preload | node | node-webkit | web | webworker
-  entry: './src/index.js',
-  // By default to ./src
-  // Here is the application starts executing and the webpack starts bundling
+process.env.NODE_ENV = PRODUCTION;
+// Production mode specific configurations
+const prodConfig = {
+  mode: PRODUCTION, // string - 'none' | 'development' | 'production'
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                'babel-preset-react-app'
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(PRODUCTION)
+    }),
     // Cleaning up the '/dist' folder
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
@@ -35,7 +57,9 @@ const config = {
       // webpack relative or absolute path to the template.
       // By default it will use src/index.ejs if it exists.
     })
-  ]  
+  ]
 };
+// Merges the base config and the prod config to create a new config object
+const config = merge(baseConfig, prodConfig);
 
 module.exports = config;

@@ -10,7 +10,9 @@
 // BrowserWindow - In the main process.
 // Or use `remote` from the renderer process.
 // const { BrowserWindow } = require('electron').remote
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow } = require('electron'); // eslint-disable-line import/no-extraneous-dependencies
+const path = require('path');
+const url = require('url');
 
 // Keep a global reference of the window object,
 // if you don't, then the window will be closed automatically when
@@ -18,6 +20,7 @@ const { app, BrowserWindow } = require('electron');
 let currentWindow = BrowserWindow || null;
 // Keep a reference for the development mode
 let dev = false;
+let loadUrlPath = '';
 
 // Determine the mode (development or production)
 if (process.defaultApp
@@ -36,12 +39,36 @@ function createBrowserWindow() {
     width: 1380, // Window's width in pixels. Default is 800.
     height: 700, // Window's height in pixels. Default is 600.
     show: false, // Whether window should be shown when created. Default is true
+    webPreferences: {
+      nodeIntegration: true,
+      // webSecurity: false
+    }
   });
   // Maximizes the window.
   // This will also show (but not focus) the window if it isn't being displayed already.
   currentWindow.maximize();
-  // load the local index file of the application
-  currentWindow.loadFile('./dist/index.html');
+  // Check whether it is a development or production mode
+  // In the development mode, webpack-dev-server will be running
+  if(dev && process.argv.indexOf('--noDevServer') === -1) {
+    // Set a remote URL 
+    loadUrlPath = url.format({
+      protocol: 'http:',
+      host: 'localhost:8080',
+      pathname: 'index.html',
+      slashes: false
+    });
+  } else {
+    // Set local HTML file in the case of production
+    loadUrlPath = url.format({
+      protocol: 'file:',
+      pathname: path.join(__dirname, '../dist', 'index.html'),
+      slashes: true
+    });
+  }
+  // Load a remote URL in the case of development mode
+  // or load a local HTML file in the production mode
+  currentWindow.loadURL(loadUrlPath);
+  // currentWindow.loadFile('./dist/index.html');
   // Don't show the app window until it is ready and loaded.
   // While loading the page, the `ready-to-show` event will be emitted
   // when the renderer process has rendered the page for the first time if the window has not been shown yet.
